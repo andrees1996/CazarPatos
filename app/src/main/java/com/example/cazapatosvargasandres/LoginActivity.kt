@@ -10,8 +10,12 @@ import android.widget.CheckBox
 
 
 class LoginActivity : AppCompatActivity() {
+
+    //----------------variables para el manejo de archivos
+    lateinit var manejadorArchivoExterno: FileHandler
     lateinit var manejadorArchivo: FileHandler
     lateinit var checkBoxRecordarme: CheckBox
+    //---------------------------------------------------------------
     lateinit var editTextEmail: EditText
     lateinit var editTextPassword:EditText
     lateinit var buttonLogin:Button
@@ -21,14 +25,21 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         //Inicialización de variables
-        manejadorArchivo = SharedPreferencesManager(this)
-        checkBoxRecordarme = findViewById(R.id.checkBoxRecordarme)
+
         editTextEmail = findViewById(R.id.editTextEmail)
         editTextPassword = findViewById(R.id.editTextPassword)
         buttonLogin = findViewById(R.id.buttonLogin)
         buttonNewUser = findViewById(R.id.buttonNewUser)
 
+        //manejador de archivos -----------------------------------------------------
+        manejadorArchivo = SharedPreferencesManager(this)
+        checkBoxRecordarme = findViewById(R.id.checkBoxRecordarme)
+
         LeerDatosDePreferencias()
+
+        //Colocar los datos en un archivo
+        manejadorArchivoExterno = FileExternalManager(this)
+
         //Eventos clic
         buttonLogin.setOnClickListener {
             val email = editTextEmail.text.toString()
@@ -75,6 +86,7 @@ class LoginActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    //------------------------------leer la informacion de los archivos --------------------------------------
     private fun LeerDatosDePreferencias(){
         val listadoLeido = manejadorArchivo.ReadInformation()
         if(listadoLeido.first != null){
@@ -95,5 +107,7 @@ class LoginActivity : AppCompatActivity() {
             listadoAGrabar ="" to ""
         }
         manejadorArchivo.SaveInformation(listadoAGrabar)
+        manejadorArchivoExterno.SaveInformation((listadoAGrabar))
+
     }
 }
